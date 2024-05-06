@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-depl
+spec: 
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth
+  template:
+    metadata:
+      labels: 
+        app: auth
+    spec:
+      containers:
+        - name: auth
+          image: salamapps/auth
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth-srv
+spec: # a type wasnt defined so default is cluster ip service which allow comms to e srv from anything else running only inside of our cluster / in other words only services inside of our cluster can access this service
+  selector:
+    app: auth #to find the service to govern which is at the dep above with the matchLabels
+  ports:
+    - name: auth
+      protocol: TCP
+      port: 3000
+      targetPort: 3000
